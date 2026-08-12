@@ -147,6 +147,20 @@ Result:
 {"Sales", "Finance"}
 ~~~~
 
+## Subsets
+
+A set is a subset of another set if all of its elements
+are contained in the other set.
+
+~~~~python
+required_access.issubset(user_access)
+~~~~
+or:
+
+~~~python
+required_access <= user_access
+~~~
+
 ## Modifying Sets
 
 ### Add an Element
