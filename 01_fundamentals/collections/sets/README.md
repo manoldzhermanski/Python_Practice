@@ -226,17 +226,3 @@ employees = {["Ivan", 4200]}  # TypeError
 
 Lists and dictionaries cannot be elements of a set because they are mutable
 and therefore unhashable.
-
-## Exercises
-
-The exercises in this directory cover:
-
-- Creating sets
-- Extracting unique values
-- Membership testing
-- Union
-- Intersection
-- Difference
-- Symmetric difference
-- Set comprehensions
-- Using sets for data processing
