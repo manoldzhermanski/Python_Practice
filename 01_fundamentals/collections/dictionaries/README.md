@@ -4831,44 +4831,7 @@ employee_names = {
 
 ---
 
-# 137. Common Pattern: Convert Dictionary to List of Records
-
-Given:
-
-```python
-employees = {
-    101: "Ivan",
-    102: "Maria",
-    103: "Georgi"
-}
-```
-
-Create:
-
-```python
-[
-    {"id": 101, "name": "Ivan"},
-    {"id": 102, "name": "Maria"},
-    {"id": 103, "name": "Georgi"}
-]
-```
-
-Using comprehension:
-
-```python
-records = [
-    {
-        "id": employee_id,
-        "name": name
-    }
-    for employee_id, name
-    in employees.items()
-]
-```
-
----
-
-# 138. Dictionary Unpacking in Function Calls
+# 137. Dictionary Unpacking in Function Calls
 
 A dictionary can be unpacked into keyword arguments using `**`.
 
