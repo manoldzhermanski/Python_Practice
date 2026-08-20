@@ -2690,182 +2690,7 @@ sorted_data = dict(sorted(data.items()))
 
 ---
 
-# 73. Finding the Maximum Value
-
-Given:
-
-```python
-employees = {
-    "Ivan": 3200,
-    "Maria": 2800,
-    "Georgi": 3500
-}
-```
-
-Maximum salary:
-
-```python
-max(employees.values())
-```
-
-Result:
-
-```python
-3500
-```
-
----
-
-# 74. Finding the Employee with the Highest Salary
-
-Use `key`:
-
-```python
-highest_paid = max(
-    employees,
-    key=employees.get
-)
-```
-
-Result:
-
-```python
-"Georgi"
-```
-
-Then:
-
-```python
-employees[highest_paid]
-```
-
-gives:
-
-```python
-3500
-```
-
----
-
-# 75. Finding the Employee with the Lowest Salary
-
-```python
-lowest_paid = min(
-    employees,
-    key=employees.get
-)
-```
-
-Result:
-
-```python
-"Maria"
-```
-
----
-
-# 76. `max()` / `min()` with Dictionary Items
-
-You can also work directly with `.items()`:
-
-```python
-highest_paid = max(
-    employees.items(),
-    key=lambda item: item[1]
-)
-```
-
-Result:
-
-```python
-("Georgi", 3500)
-```
-
-This is useful when you need both the key and the value.
-
----
-
-# 77. `sum()` with Dictionary Values
-
-```python
-total_salary = sum(
-    employees.values()
-)
-```
-
-Average:
-
-```python
-average_salary = (
-    sum(employees.values())
-    / len(employees)
-)
-```
-
-Make sure the dictionary is not empty before dividing by its length.
-
----
-
-# 78. `any()` with Dictionaries
-
-When used directly:
-
-```python
-any(data)
-```
-
-iterates over dictionary keys.
-
-Example:
-
-```python
-data = {
-    "a": 1,
-    "b": 2
-}
-```
-
-```python
-any(data)
-```
-
-checks the truthiness of the keys.
-
-More commonly, use a generator expression for a specific condition:
-
-```python
-any(
-    salary > 3000
-    for salary in employees.values()
-)
-```
-
-This checks whether **at least one employee** earns more than 3000.
-
----
-
-# 79. `all()` with Dictionaries
-
-Example:
-
-```python
-all(
-    salary > 2000
-    for salary in employees.values()
-)
-```
-
-Returns:
-
-```python
-True
-```
-
-if every salary is above 2000.
-
----
-
-# 80. Counting with Dictionaries
+# 73. Counting with Dictionaries
 
 Dictionaries are extremely useful for counting frequencies.
 
@@ -2918,7 +2743,7 @@ This is a very important dictionary pattern.
 
 ---
 
-# 81. Counting Strings
+# 74. Counting Strings
 
 ```python
 words = [
@@ -2950,7 +2775,7 @@ Result:
 
 ---
 
-# 82. Grouping Data with Dictionaries
+# 75. Grouping Data with Dictionaries
 
 Suppose:
 
@@ -2998,7 +2823,7 @@ This is a very useful real-world pattern.
 
 ---
 
-# 83. Grouping with `defaultdict`
+# 76. Grouping with `defaultdict`
 
 Python also provides:
 
@@ -3032,7 +2857,7 @@ Result:
 
 ---
 
-# 84. `defaultdict(int)` for Counting
+# 77. `defaultdict(int)` for Counting
 
 Instead of:
 
@@ -3062,7 +2887,7 @@ Missing keys automatically start at:
 
 ---
 
-# 85. `Counter`
+# 78. `Counter`
 
 For frequency counting, Python also provides:
 
@@ -3106,7 +2931,7 @@ counts.most_common(2)
 
 ---
 
-# 86. Inverting a Dictionary
+# 79. Inverting a Dictionary
 
 Suppose:
 
@@ -3171,7 +2996,7 @@ because duplicate keys are overwritten.
 
 ---
 
-# 87. Dictionary Comprehension vs Loop
+# 80. Dictionary Comprehension vs Loop
 
 This:
 
@@ -3197,7 +3022,7 @@ Don't force a complex algorithm into one giant comprehension.
 
 ---
 
-# 88. Conditional Values in Dictionary Comprehensions
+# 81. Conditional Values in Dictionary Comprehensions
 
 You can use conditional expressions:
 
@@ -3223,7 +3048,7 @@ Result:
 
 ---
 
-# 89. Conditional Keys in Dictionary Comprehensions
+# 82. Conditional Keys in Dictionary Comprehensions
 
 You can filter which entries are included:
 
@@ -3245,33 +3070,5 @@ Result:
     4: 16
 }
 ```
-
----
-
-# 90. Nested Dictionary Comprehensions
-
-Possible:
-
-```python
-matrix = {
-    i: {
-        j: i * j
-        for j in range(1, 4)
-    }
-    for i in range(1, 4)
-}
-```
-
-Result:
-
-```python
-{
-    1: {1: 1, 2: 2, 3: 3},
-    2: {1: 2, 2: 4, 3: 6},
-    3: {1: 3, 2: 6, 3: 9}
-}
-```
-
-This is powerful, but readability matters.
 
 ---
