@@ -12,7 +12,7 @@
 4. [Array Attributes](#array-attributes)
 5. [Creating Arrays](#creating-arrays)
 6. [Data Types](#data-types)
-7. [Indexing](#indexing)
+7. [Basic Indexing](#basic-indexing)
 8. [Slicing](#slicing)
 9. [Boolean Indexing](#boolean-indexing)
 10. [Fancy Indexing](#fancy-indexing)
