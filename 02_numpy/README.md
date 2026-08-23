@@ -332,7 +332,7 @@ Output:
 2D:
 
 ```python
-np.zeros((2, 3))
+np.zeros(shape=(2, 3))
 ```
 
 Output:
@@ -340,6 +340,30 @@ Output:
 ```text
 [[0. 0. 0.]
  [0. 0. 0.]]
+```
+
+---
+
+## `np.zeros_like()`
+
+Creates an array of zeros with the same shape as another array.
+
+```python
+original = np.array([
+    [1, 2, 3],
+    [4, 5, 6]
+])
+
+zeros = np.zeros_like(original)
+
+print(zeros)
+```
+
+Output:
+
+```text
+[[0 0 0]
+ [0 0 0]]
 ```
 
 ---
@@ -359,7 +383,31 @@ Output:
 2D:
 
 ```python
-np.ones((2, 3))
+np.ones(shape=(2, 3))
+```
+
+---
+
+## `np.ones_like()`
+
+Creates an array of ones with the same shape as another array.
+
+```python
+original = np.array([
+    [1, 2, 3],
+    [4, 5, 6]
+])
+
+ones = np.ones_like(original)
+
+print(ones)
+```
+
+Output:
+
+```text
+[[1 1 1]
+ [1 1 1]]
 ```
 
 ---
@@ -381,10 +429,34 @@ Output:
 2D:
 
 ```python
-np.full((2, 3), 7)
+np.full(shape=(2, 3), fill_value=7)
 ```
 
 ---
+
+## `np.full_like()`
+
+Creates an array with the same shape as another array and fills it with a specified value.
+
+```python
+original = np.array([
+    [1, 2, 3],
+    [4, 5, 6]
+])
+
+full = np.full_like(original, 99)
+
+print(full)
+```
+
+Result:
+
+```text
+[[99 99 99]
+ [99 99 99]]
+```
+
+ ---
 
 ## `np.empty()`
 
@@ -397,6 +469,25 @@ np.empty(5)
 The values are whatever happens to be present in memory.
 
 Do not use `empty()` when you need initialized values.
+
+---
+
+## `np.empty_like()`
+
+Creates an uninitialized array with the same shape as another array.
+
+```python
+original = np.array([
+    [1, 2, 3],
+    [4, 5, 6]
+])
+
+empty = np.empty_like(original)
+
+print(empty)
+```
+
+The values are arbitrary because the memory is not initialized.
 
 ---
 
@@ -436,6 +527,18 @@ Output:
 
 ```text
 [0 2 4 6 8]
+```
+
+Step could be a float:
+
+```python
+np.arange(0, 11, 2.5)
+```
+
+Output:
+
+```text
+[0 2.5 5 7.5 10]
 ```
 
 ---
