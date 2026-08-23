@@ -535,198 +535,592 @@ Be careful: converting floats to integers truncates the decimal part.
 
 ---
 
-# Indexing
+## Basic Indexing
 
-NumPy indexing starts at `0`, just like Python lists.
-
-```python
-arr = np.array([10, 20, 30, 40])
-```
-
-First element:
+Consider a 2D array:
 
 ```python
-arr[0]
+import numpy as np
+
+matrix = np.array([
+    [1, 2, 3],
+    [4, 5, 6]
+])
 ```
-
-Output:
-
-```text
-10
-```
-
-Last element:
+Its shape is:
 
 ```python
-arr[-1]
+matrix.shape
+# (2, 3)
 ```
 
-Output:
+A 2D NumPy array can be accessed using:
 
-```text
-40
+```python
+array[row, column]
+```
+
+### Accessing a Single Element
+
+```python
+matrix[0, 0]
+# 1
+
+matrix[1, 2]
+# 6
+```
+
+When both dimensions are indexed with a single integer, the result is a NumPy scalar:
+
+```python
+type(matrix[0, 0])
+# numpy.int64
+```
+
+A NumPy scalar does not have array dimensions:
+
+```python
+matrix[0, 0].shape
+# ()
+```
+
+## Slicing
+
+The general slicing syntax is:
+
+```python
+array[start:stop:step]
+```
+Where:
+- start → starting index (inclusive)
+- stop → ending index (exclusive)
+- step → number of positions to move
+
+**All three parts are optional.**
+
+### [:] — Entire Array
+
+```python
+matrix[:]
+```
+
+Selects the entire array.
+
+```python
+matrix[:]
+# [[1 2 3]
+#  [4 5 6]]
+```
+The omitted start defaults to the beginning.
+
+The omitted stop defaults to the end.
+
+For a 2D array, you can explicitly specify both dimensions:
+
+```python
+matrix[:, :]
+```
+
+Meaning:
+- all rows
+- all columns
+
+Example:
+ 
+```python
+matrix[:, :]
+# [[1 2 3]
+#  [4 5 6]]
 ```
 
 ---
 
-# 2D Indexing
+### Row Slicing
+
+**Consider:**
 
 ```python
-arr = np.array([
-    [10, 20, 30],
-    [40, 50, 60]
+matrix = np.array([
+    [1, 2, 3],
+    [4, 5, 6]
 ])
 ```
 
-Access first row:
+**First Row**
 
 ```python
-arr[0]
+matrix[0]
+# [1 2 3]
 ```
-
-Output:
-
-```text
-[10 20 30]
-```
-
-Access first row, first column:
+**The resulting shape is:**
 
 ```python
-arr[0, 0]
+matrix[0].shape
+# (3,)
 ```
 
-Output:
+The row is returned as a 1D array.
 
-```text
-10
-```
-
-Access second row, third column:
+#### First Row Using Slicing
 
 ```python
-arr[1, 2]
+matrix[0:1]
+# [[1 2 3]]
 ```
 
-Output:
+The resulting shape is:
 
-```text
-60
+```python
+matrix[0:1].shape
+# (1, 3)
+```
+
+These two expressions contain the same values:
+
+```python
+matrix[0]
+matrix[0:1]
+```
+
+But their shapes are different:
+
+```python
+matrix[0]     → (3,)
+matrix[0:1]   → (1, 3)
+```
+
+#### [:n] — From the Beginning
+
+```python
+matrix[:2]
+```
+
+Means:  
+**Select rows from the beginning up to, but not including, index 2.**
+
+**Example:**
+
+```python
+matrix = np.array([
+    [1, 2, 3],
+    [4, 5, 6]
+])
+```
+
+```python
+matrix[:1]
+# [[1 2 3]]
+```
+
+```python
+matrix[:2]
+# [[1 2 3]
+#  [4 5 6]]
+```
+
+The stop index is always excluded.
+
+#### [n:] — From an Index to the End
+
+```python
+matrix[1:]
+```
+
+Means:  
+**Start at index 1 and continue to the end.**
+
+**Example:**
+
+```python
+matrix[1:]
+# [[4 5 6]]
 ```
 
 ---
 
-# Slicing
+#### Negative Indexing
 
-NumPy slicing works similarly to Python lists.
+Negative indices count from the end of an array.
+
+**For example:**
 
 ```python
 arr = np.array([10, 20, 30, 40, 50])
+arr[-1]
+# 50
 ```
-
-First three elements:
 
 ```python
-arr[:3]
+arr[-2]
+# 40
 ```
 
-Output:
+#### [:-1] — Everything Except the Last Element
+
+```python
+arr[:-1]
+# [10 20 30 40]
+```
+
+This means:  
+**Start from the beginning and stop before the last element.**
+
+Other useful examples:
+
+```python
+arr[:-2]
+# [10 20 30]
+```
+
+```python
+arr[-2:]
+# [40 50]
+```
+
+```python
+arr[-1:]
+# [50]
+```
+
+Notice the difference between:
+
+```python
+arr[-1]
+# 50
+```
+
+and:
+
+```python
+arr[-1:]
+# [50]
+```
+**The first returns a scalar.**
+
+**The second returns a 1D array.**
+
+### Selecting Rows and Columns
+
+For 2D arrays, use:
 
 ```text
-[10 20 30]
+array[rows, columns]
 ```
 
-Elements from index 2:
+**Consider:**
 
 ```python
-arr[2:]
-```
-
-Output:
-
-```text
-[30 40 50]
-```
-
-Every second element:
-
-```python
-arr[::2]
-```
-
-Output:
-
-```text
-[10 30 50]
-```
-
-Reverse:
-
-```python
-arr[::-1]
-```
-
-Output:
-
-```text
-[50 40 30 20 10]
-```
-
----
-
-# 2D Slicing
-
-```python
-arr = np.array([
+matrix = np.array([
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9]
 ])
 ```
 
-First two rows:
+All rows, second column
 
 ```python
-arr[:2]
+matrix[:, 1]
+# [2 5 8]
 ```
 
-First two columns:
-
-```python
-arr[:, :2]
-```
-
-Output:
+**Explanation:**
 
 ```text
-[[1 2]
- [4 5]
- [7 8]]
+: → all rows
+1 → column with index 1
 ```
 
-Second column:
+**The resulting shape is:**
 
 ```python
-arr[:, 1]
+matrix[:, 1].shape
+# (3,)
 ```
 
-Output:
+**The column is returned as a 1D array.**
 
-```text
-[2 5 8]
-```
-
-Second row:
+#### All rows, columns from index 1 onward
 
 ```python
-arr[1, :]
+matrix[:, 1:]
+# [[2 3]
+#  [5 6]
+#  [8 9]]
 ```
 
-Output:
+**Shape:**
+
+```python
+matrix[:, 1:].shape
+# (3, 2)
+```
+
+#### Rows from index 1 onward, columns from index 1 onward
+
+```python
+matrix[1:, 1:]
+# [[5 6]
+#  [8 9]]
+```
+
+**Shape:**
+
+```python
+matrix[1:, 1:].shape
+# (2, 2)
+```
+
+---
+
+####  Preserving a Row or Column Dimension
+
+There is an important difference between selecting a row/column with an integer and selecting it with a slice.
+
+Row as 1D
+
+```python
+matrix[0]
+# [1 2 3]
+```
+
+```python
+matrix[0].shape
+# (3,)
+```
+
+Row preserved as 2D
+
+```python
+matrix[0:1]
+# [[1 2 3]]
+```
+
+```python
+matrix[0:1].shape
+# (1, 3)
+```
+
+Similarly, for columns:
+
+Column as 1D
+
+```python
+matrix[:, 0]
+# [1 4 7]
+```
+
+```python
+matrix[:, 0].shape
+# (3,)
+```
+
+Column preserved as 2D
+
+```python
+matrix[:, 0:1]
+# [[1]
+#  [4]
+#  [7]]
+```
+
+```python
+matrix[:, 0:1].shape
+# (3, 1)
+```
+
+**Key idea**
 
 ```text
-[4 5 6]
+matrix[0]      → (3,)
+matrix[0:1]    → (1, 3)
+
+matrix[:, 0]   → (3,)
+matrix[:, 0:1] → (3, 1)
 ```
+Integer indexing removes a dimension.
+
+Slicing preserves the dimension.
+
+---
+
+### Stepwise Slicing
+
+The full syntax is:
+
+```text
+array[start:stop:step]
+```
+
+Example:
+
+```python
+arr = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+arr[::2]
+# [0 2 4 6 8]
+
+arr[::3]
+# [0 3 6 9]
+```
+
+The step determines how many positions are skipped.
+
+---
+
+#### Negative Step
+
+A negative step moves backwards.
+
+```python
+arr[::-1]
+# [9 8 7 6 5 4 3 2 1 0]
+```
+
+This is a common way to reverse an array.
+
+##### For a 2D array:
+
+```python
+matrix[::-1]
+```
+
+reverses the order of the rows.
+
+##### Multiple Dimensions with Steps
+
+```python
+matrix[::-1, ::2]
+```
+
+**Means:**
+
+```text
+[::-1] → reverse the rows
+[::2]  → take every second column
+```
+
+Each dimension can have its own slicing rule.
+
+---
+
+### Slicing with Multiple Dimensions
+
+**For a 2D array:**
+
+```python
+matrix = np.array([
+    [1, 1, 1, 2, 0],
+    [3, 6, 6, 7, 4],
+    [4, 5, 3, 8, 0]
+])
+```
+
+**Each dimension can have its own start, stop, and step:**
+
+```python
+matrix[1:, 1:]
+```
+
+**Result:**
+
+```python
+[[6 6 7 4]
+ [5 3 8 0]]
+```
+
+**More generally:**
+
+```text
+matrix[row_start:row_stop:row_step,
+       col_start:col_stop:col_step]
+```
+
+---
+
+### Indexing vs Slicing and Dimensionality
+
+This is one of the most important concepts in NumPy.
+
+**Consider:**
+
+```python
+matrix = np.array([
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+])
+```
+
+#### Single element
+
+```python
+matrix[0, 0]
+```
+
+**Result:**
+
+```python
+1
+```
+
+**Type:**
+
+```python
+type(matrix[0, 0])
+# numpy.int64
+```
+
+**Shape:**
+
+```python
+matrix[0, 0].shape
+# ()
+```
+
+**This is a NumPy scalar.**
+
+#### One dimension preserved
+
+```python
+matrix[0, 0:1]
+```
+
+**Result:**
+
+```python
+[1]
+```
+
+**Shape:**
+
+```python
+matrix[0, 0:1].shape
+# (1,)
+```
+
+**This is a 1D ndarray.**
+
+#### Both dimensions preserved
+
+```python
+matrix[0:1, 0:1]
+```
+
+**Result:**
+
+```python
+[[1]]
+```
+
+**Shape:**
+
+```python
+matrix[0:1, 0:1].shape
+# (1, 1)
+```
+
+**This is a 2D ndarray.**
 
 ---
 
@@ -855,6 +1249,95 @@ because:
 
 ```text
 10 != 12
+```
+
+---
+
+## squeeze()
+
+squeeze() removes dimensions whose size is 1.
+
+It can be used either as a method:
+
+```python
+arr.squeeze()
+```
+
+or as a NumPy function:
+
+```python
+np.squeeze(arr)
+```
+
+Both perform the same operation.
+
+### Example: (1, 3) → (3,)
+
+```python
+arr = np.array([[1, 2, 3]])
+```
+
+```python
+arr.shape
+# (1, 3)
+```
+
+```python
+arr.squeeze()
+# [1 2 3]
+```
+
+```python
+arr.squeeze().shape
+# (3,)
+```
+
+The dimension with size 1 was removed.
+
+### Example: (3, 1) → (3,)
+
+```python
+arr = np.array([
+    [1],
+    [2],
+    [3]
+])
+```
+
+```python
+arr.shape
+# (3, 1)
+```
+
+```python
+arr.squeeze()
+# [1 2 3]
+```
+
+```python
+arr.squeeze().shape
+# (3,)
+```
+
+#### Example: (1, 1) → ()
+
+```python
+arr = np.array([[10]])
+```
+
+```python
+arr.shape
+# (1, 1)
+```
+
+```python
+arr.squeeze()
+# 10
+```
+
+```python
+arr.squeeze().shape
+# ()
 ```
 
 ---
