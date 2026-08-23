@@ -23,19 +23,20 @@
 15. [Aggregation Functions](#aggregation-functions)
 16. [Axis](#axis)
 17. [Mathematical Functions](#mathematical-functions)
-18. [Rounding](#rounding)
-19. [Handling Missing Values](#handling-missing-values)
-20. [Sorting](#sorting)
-21. [Searching](#searching)
-22. [Conditional Operations](#conditional-operations)
-23. [Broadcasting](#broadcasting)
-24. [Vectorization](#vectorization)
-25. [Random Numbers](#random-numbers)
-26. [Linear Algebra Basics](#linear-algebra-basics)
-27. [Copy vs View](#copy-vs-view)
-28. [Saving and Loading Arrays](#saving-and-loading-arrays)
-29. [Useful Patterns](#useful-patterns)
-30. [NumPy vs Python Lists](#numpy-vs-python-lists)
+18. [Statistic Functions](#statistic-functions)
+19. [Rounding](#rounding)
+20. [Handling Missing Values](#handling-missing-values)
+21. [Sorting](#sorting)
+22. [Searching](#searching)
+23. [Conditional Operations](#conditional-operations)
+24. [Broadcasting](#broadcasting)
+25. [Vectorization](#vectorization)
+26. [Random Numbers](#random-numbers)
+27. [Linear Algebra Basics](#linear-algebra-basics)
+28. [Copy vs View](#copy-vs-view)
+29. [Saving and Loading Arrays](#saving-and-loading-arrays)
+30. [Useful Patterns](#useful-patterns)
+31. [NumPy vs Python Lists](#numpy-vs-python-lists)
 
 ---
 
@@ -2023,6 +2024,359 @@ np.sin(arr)
 np.cos(arr)
 ```
 
+---
+
+# Statistic Functions
+
+## `np.minimum()`
+
+`np.minimum()` performs an element-wise comparison between two arrays (`np.minimum(x1, x2)`) and returns the smaller value at each position.
+
+```python
+a = np.array([10, 20, 30, 40])
+b = np.array([15, 18, 35, 25])
+
+result = np.minimum(a, b)
+
+print(result)
+# [10 18 30 25]
+```
+
+Result:
+
+```text
+10 vs 15 → 10
+20 vs 18 → 18
+30 vs 35 → 30
+40 vs 25 → 25
+```
+
+## `np.maximum()`
+
+`np.maximum()` is the opposite of `np.minimum()`.
+
+It returns the larger value at each position.
+
+```python
+a = np.array([10, 20, 30, 40])
+b = np.array([15, 18, 35, 25])
+
+np.maximum(a, b)
+```
+
+Result:
+
+```text
+[15 20 35 40]
+```
+
+## `np.ptp()`
+
+`np.ptp()` means peak-to-peak.
+
+It calculates:
+
+```text
+maximum - minimum
+```
+
+Example:
+
+```python
+scores = np.array([65, 72, 80, 91, 88])
+
+np.ptp(scores)
+```
+
+Result:
+
+```text
+26
+```
+
+### `np.ptp()` with axis
+
+```python
+scores = np.array([
+    [80, 90, 70],
+    [60, 85, 75],
+    [95, 88, 92]
+])
+```
+### Per row
+
+```python
+np.ptp(scores, axis=1)
+```
+
+Result:
+
+```text
+[20 25  7]
+```
+
+#### Per Column
+
+```python
+np.ptp(scores, axis=0)
+```
+
+Result:
+
+```text
+[35  5 22]
+```
+
+## `np.percentile()`
+
+A percentile tells us the value below which a certain percentage of observations falls.
+
+For example:
+- 25th percentile → 25% of observations are at or below this value
+- 50th percentile → median
+- 75th percentile → 75% of observations are at or below this value
+
+Use:
+
+```python
+np.percentile(array, q)
+```
+
+**where q is between 0 and 100.**
+
+Example:
+
+```python
+scores = np.array([10, 20, 30, 40, 50])
+np.percentile(scores, 50)
+```
+
+Result:
+
+```text
+30
+```
+
+### Multiple Percentiles
+
+```python
+np.percentile(scores, [25, 50, 75])
+```
+
+Result:
+
+```text
+[20. 30. 40.]
+```
+
+### Percentiles with axis
+
+Consider:
+
+```python
+scores = np.array([
+    [80, 90, 70],
+    [60, 85, 75],
+    [95, 88, 92]
+])
+```
+
+**Calculate the median for each column:**
+
+```python
+np.percentile(scores, 50, axis=0)
+```
+
+Result:
+
+```text
+[80. 88. 75.]
+```
+**Calculate the median for each row:**
+
+```python
+np.percentile(scores, 50, axis=1)
+```
+
+Result:
+
+```text
+[80. 75. 92.]
+```
+
+### Percentile Interpolation / method
+
+When calculating a percentile, the requested percentile may fall between two actual values.
+
+NumPy therefore needs a rule for deciding how to calculate the result.
+
+Modern NumPy uses the method parameter:
+
+```python
+np.percentile(array, q, method=...)
+```
+
+Some commonly encountered methods are:
+
+```python
+"linear"
+"lower"
+"higher"
+"midpoint"
+"nearest"
+```
+
+Given:
+
+```python
+arr = np.array([10, 20, 30, 40])
+```
+For the 25th percentile:
+
+```python
+np.percentile(arr, 25, method="linear")
+# 17.5
+
+np.percentile(arr, 25, method="lower")
+# 10
+
+np.percentile(arr, 25, method="higher")
+# 20
+
+np.percentile(arr, 25, method="midpoint")
+# 15
+
+np.percentile(arr, 25, method="nearest")
+# 20
+```
+
+## `np.cov()`
+
+`np.cov()` calculates the covariance matrix.
+
+Covariance measures how two variables change together.
+
+Interpretation:
+- positive covariance
+→ variables tend to increase together
+- negative covariance
+→ one tends to increase while the other decreases
+- covariance close to zero
+→ little linear co-movement
+
+Example:
+
+```python
+hours = np.array([1, 2, 3, 4, 5])
+scores = np.array([50, 55, 65, 70, 80])
+```
+
+Calculate covariance:
+
+```python
+np.cov(hours, scores)
+```
+Result:
+
+```text
+[[  2.5   18.75]
+ [ 18.75 141.5 ]]
+```
+The matrix has the form:
+
+```text
+[[variance(hours), covariance(hours, scores)],
+ [covariance(scores, hours), variance(scores)]]
+```
+
+## `np.corrcoef()`
+
+`np.corrcoef()` calculates the correlation coefficient matrix.
+
+Correlation measures the strength and direction of a linear relationship.
+
+Correlation values range from:
+- -1 → perfect negative correlation
+-  0 → no linear correlation
+- +1 → perfect positive correlation
+
+Example:
+
+```python
+hours = np.array([1, 2, 3, 4, 5])
+scores = np.array([50, 55, 65, 70, 80])
+
+np.corrcoef(hours, scores)
+```
+
+The result will be approximately:
+
+```text
+[[1.         0.993...]
+ [0.993...   1.        ]]
+```
+
+- +1.0 - **Perfect positive linear relationship**
+- +0.7 - **Strong positive relationship**
++ +0.3 - **Weak/moderate positive relationship**
+-  0.0 - **No linear relationship**
+- -0.3 - **Weak/moderate negative relationship**
+- -0.7 - **Strong negative relationship**
+- -1.0 - **Perfect negative linear relationship**
+
+## `np.histogram()`
+
+`np.histogram()` calculates the distribution of numerical data.
+
+It divides the data into intervals called **bins** and counts how many values fall into each interval.
+The **range** parameter specifies the lower and upper limits used for the bins.
+
+Syntax:
+
+```python
+np.histogram(a, bins=10, range=None)
+```
+The function returns:
+
+```text
+hist
+bin_edges
+```
+
+---
+
+## `np.quantile()`
+
+`np.quantile()` is closely related to np.percentile().
+
+The main difference is the scale of the input.
+
+Percentile uses values from:
+
+```text
+0 → 100
+```
+
+Example:
+
+```python
+np.percentile(scores, 25)
+# 20
+```
+
+
+
+Quantile uses values from:
+
+```text
+0 → 1
+```
+Example:
+
+```python
+np.quantile(scores, 0.25)
+# 20
+```
 ---
 
 # Rounding
