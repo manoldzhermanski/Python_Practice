@@ -2985,43 +2985,200 @@ Now changing `copy` will not modify `arr`.
 
 # Saving and Loading Arrays
 
-## Save a Single Array
+## `np.loadtxt()`
 
-```python
-np.save("data.npy", arr)
+`np.loadtxt()` loads data from a text file into a NumPy array.
+
+It works best with **clean, structured numerical data**.
+
+Suppose we have a file called:
+
+```text
+data.txt
+```
+containing:
+```text
+10 20 30
+40 50 60
+70 80 90
 ```
 
-Load:
+We can load it with:
 
 ```python
-arr = np.load("data.npy")
+data = np.loadtxt("data.txt")
+print(data)
+```
+Output:
+
+```text
+[[10. 20. 30.]
+ [40. 50. 60.]
+ [70. 80. 90.]]
 ```
 
----
-
-## Save Multiple Arrays
+Common parameters:
 
 ```python
-np.savez(
-    "data.npz",
-    values=arr,
-    other=another_array
+np.loadtxt(
+    fname,
+    dtype=float,
+    delimiter=None,
+    skiprows=0,
+    usecols=None
 )
 ```
 
-Load:
+The most important ones to remember are:
+- fname → file to read
+- dtype → data type
+- delimiter → separator between values
+- skiprows → number of rows to skip
+- usecols → columns to load
 
-```python
-data = np.load("data.npz")
+## `np.genfromtxt()`
+
+`np.genfromtxt()` is similar to `np.loadtxt()`, but it is designed to handle missing or invalid data.
+
+Example:
+
+```text
+10,20,30
+40,,60
+70,80,90
 ```
 
-Access:
+The second row contains a missing value.
+
+**Using:**
 
 ```python
-data["values"]
-data["other"]
+data = np.genfromtxt(
+    "data.csv",
+    delimiter=","
+)
+```
+NumPy can represent the missing value as nan.
+
+Result:
+
+```text
+[[10. 20. 30.]
+ [40. nan 60.]
+ [70. 80. 90.]]
 ```
 
+Common parameters: 
+```python
+data = np.genfromtxt(
+    "employees.csv",
+    delimiter=",",
+    dtype=float,
+    skip_header=1,
+    skip_footer=1,
+    usecols=(0, 2),
+    missing_values="NA",
+    filling_values=np.nan
+)
+```
+
+The most important ones to remember are:
+- delimiter        → separator between values
+- dtype            → data type
+- skip_header      → number of rows to be skipped from the beginning of the array
+- skip_footer      → number of rows to be skipped from the end of the array
+- usecols          → columns to load
+- missing_values   → set of strings corresponding to missing data
+- filling_values   → set of values to be used as default when the data are missing
+
+## `np.save()`
+
+`np.save()` saves a NumPy array in NumPy's binary `.npy` format.
+
+```text
+np.save(filename, array)
+```
+
+Example:
+
+```python
+arr = np.array([
+    [1, 2, 3],
+    [4, 5, 6]
+])
+
+np.save("data.npy", arr)
+```
+
+This creates:
+```text
+data.npy
+```
+
+## `np.savez()`
+
+`np.savez()` allows you to save multiple NumPy arrays in a single file.
+
+```python
+np.savez(
+    filename,
+    name1=array1,
+    name2=array2
+)
+```
+
+Example:
+
+```python
+salaries = np.array([1800, 2500, 3200])
+ages = np.array([25, 30, 35])
+
+np.savez(
+    "employees.npz",
+    salaries=salaries,
+    ages=ages
+)
+```
+This creates:
+
+```text
+employees.npz
+```
+
+Think of an `.npz` file as a container:
+
+```text
+employees.npz
+│
+├── salaries
+└── ages
+```
+You can inspect the available arrays:
+
+```python
+data.files
+```
+
+Result:
+
+```python
+['salaries', 'ages']
+
+```
+**You can also save arrays without explicitly giving them names. Then NumPy will assign default names:**
+
+```text
+arr_0
+arr_1
+```
+
+## `numpy.load()`
+
+`numpy.load()` loads arrays or pickled objects from ```.npy, .npz``` files
+
+```python
+data = np.load("employees.npz")
+```
 ---
 
 # Working with Text Files
