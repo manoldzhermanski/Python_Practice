@@ -552,3 +552,519 @@ df = pd.read_csv("employees.csv")
 ```
 
 ---
+
+# 15. Selecting Columns
+
+A DataFrame column can be selected using its column label.
+
+## Single column
+
+```python
+df["age"]
+```
+
+Selecting a single column returns a **Series**.
+
+```python
+ages = df["age"]
+
+print(type(ages))
+```
+
+---
+
+## Multiple columns
+
+Multiple columns can be selected by passing a list of column names.
+
+```python
+df[["name", "age", "salary"]]
+```
+
+---
+
+# 16. `loc[]`
+
+`loc[]` is used for **label-based selection**.
+
+It selects data using the labels of rows and columns.
+
+```python
+df.loc[row_label]
+```
+
+Example:
+
+```python
+df.loc[2]
+```
+
+This selects the row whose index label is `2`.
+
+---
+
+## Selecting a specific value
+
+We can provide both a row label and a column label:
+
+```python
+df.loc[2, "salary"]
+```
+
+This means:
+
+```text
+row label → 2
+column label → salary
+```
+
+The result is the value stored at that position.
+
+---
+
+## Selecting specific rows
+
+Multiple row labels can be provided as a list:
+
+```python
+df.loc[[0, 2, 4]]
+```
+
+This selects rows with labels:
+
+```text
+0
+2
+4
+```
+
+---
+
+## Selecting specific rows and columns
+
+```python
+df.loc[
+    [0, 2, 4],
+    ["name", "salary"]
+]
+```
+
+This selects:
+
+```text
+Rows:
+0, 2, 4
+
+Columns:
+name, salary
+```
+
+---
+
+# 17. `iloc[]`
+
+`iloc[]` is used for **position-based selection**.
+
+It selects data based on the integer position of rows and columns.
+
+```python
+df.iloc[row_position]
+```
+
+For example:
+
+```python
+df.iloc[2]
+```
+
+selects the **third row**, because positions start at `0`.
+
+```text
+Position 0 → first row
+Position 1 → second row
+Position 2 → third row
+```
+
+---
+
+## Selecting a specific value
+
+We can specify both the row and column position:
+
+```python
+df.iloc[2, 1]
+```
+
+This means:
+
+```text
+row position → 2
+column position → 1
+```
+
+---
+
+## Selecting specific rows
+
+```python
+df.iloc[[0, 2, 4]]
+```
+
+This selects the first, third and fifth rows by position.
+
+---
+
+## Selecting specific rows and columns
+
+```python
+df.iloc[
+    [0, 2, 4],
+    [0, 2]
+]
+```
+
+This selects:
+
+```text
+Rows:
+positions 0, 2, 4
+
+Columns:
+positions 0 and 2
+```
+
+---
+
+# 18. `loc` vs `iloc`
+
+The most important distinction:
+
+```text
+loc
+↓
+LABEL
+
+iloc
+↓
+POSITION
+```
+
+Consider a DataFrame with custom index labels:
+
+```python
+df = pd.DataFrame({
+    "name": ["Ivan", "Maria", "Peter", "Anna"],
+    "salary": [2500, 3200, 2800, 2100]
+}, index=["EMP101", "EMP205", "EMP309", "EMP412"])
+```
+
+The DataFrame looks like:
+
+```text
+          name    salary
+EMP101    Ivan      2500
+EMP205    Maria     3200
+EMP309    Peter     2800
+EMP412    Anna      2100
+```
+
+### `loc`
+
+```python
+df.loc["EMP309"]
+```
+
+means:
+
+> Find the row whose **label** is `"EMP309"`.
+
+---
+
+### `iloc`
+
+```python
+df.iloc[2]
+```
+
+means:
+
+> Find the row at **position 2**.
+
+Both return the row containing Peter, but they get there differently.
+
+```text
+loc["EMP309"]
+       ↓
+find this LABEL
+
+iloc[2]
+       ↓
+find this POSITION
+```
+
+---
+
+# 19. `loc` and `iloc` with Columns
+
+The same concept applies to columns.
+
+Suppose:
+
+```text
+          name    age    salary
+EMP101    Ivan     25     2500
+EMP205    Maria    30     3200
+EMP309    Peter    28     2800
+```
+
+The column labels are:
+
+```text
+"name"
+"age"
+"salary"
+```
+
+Their positions are:
+
+```text
+0 → name
+1 → age
+2 → salary
+```
+
+Therefore:
+
+```python
+df.loc["EMP309", "salary"]
+```
+
+uses **labels**.
+
+While:
+
+```python
+df.iloc[2, 2]
+```
+
+uses **positions**.
+
+Both select the same value:
+
+```text
+2800
+```
+
+---
+
+# 20. Slicing with `iloc`
+
+`iloc` follows normal Python-style slicing.
+
+```python
+df.iloc[0:3]
+```
+
+selects positions:
+
+```text
+0
+1
+2
+```
+
+The ending position `3` is **not included**.
+
+This is the same slicing rule used by Python lists.
+
+---
+
+## Selecting rows and columns with `iloc`
+
+```python
+df.iloc[0:3, 0:2]
+```
+
+means:
+
+```text
+Rows:
+positions 0, 1, 2
+
+Columns:
+positions 0, 1
+```
+
+---
+
+# 21. Slicing with `loc`
+
+`loc` uses labels when slicing.
+
+For example:
+
+```python
+df.loc["EMP101":"EMP309"]
+```
+
+selects:
+
+```text
+EMP101
+EMP205
+EMP309
+```
+
+Unlike normal Python slicing, the ending label is **included** when using label-based slicing.
+
+### Important difference
+
+```python
+df.iloc[0:3]
+```
+
+→ ending position `3` is excluded.
+
+```python
+df.loc["EMP101":"EMP309"]
+```
+
+→ ending label `"EMP309"` is included.
+
+---
+
+# 22. Boolean Indexing / Filtering
+
+Pandas allows us to filter rows using conditions.
+
+For example:
+
+```python
+df[df["age"] > 25]
+```
+
+This selects all rows where `age` is greater than `25`.
+
+The expression:
+
+```python
+df["age"] > 25
+```
+
+produces a Boolean Series:
+
+```text
+False
+True
+True
+False
+...
+```
+
+Pandas keeps the rows where the result is `True`.
+
+---
+
+## Filtering with comparison operators
+
+Common operators include:
+
+```text
+>       greater than
+<       less than
+>=      greater than or equal to
+<=      less than or equal to
+==      equal to
+!=      not equal to
+```
+
+Examples:
+
+```python
+df[df["age"] >= 30]
+```
+
+```python
+df[df["salary"] < 3000]
+```
+
+```python
+df[df["department"] == "IT"]
+```
+
+```python
+df[df["department"] != "IT"]
+```
+
+---
+
+# 23. Multiple Conditions
+
+Multiple conditions can be combined using:
+
+```text
+&    AND
+|    OR
+~    NOT
+```
+
+## AND
+
+```python
+df[
+    (df["age"] > 25) &
+    (df["salary"] > 3000)
+]
+```
+
+Both conditions must be `True`.
+
+---
+
+## OR
+
+```python
+df[
+    (df["department"] == "IT") |
+    (df["department"] == "HR")
+]
+```
+
+At least one condition must be `True`.
+
+---
+
+## NOT
+
+```python
+df[
+    ~(df["department"] == "IT")
+]
+```
+
+This selects rows where the department is **not** IT.
+
+---
+
+# 24. Combining Filtering and Column Selection
+
+Filtering and column selection can be combined.
+
+For example, to display only the names and salaries of employees earning more than `3000`:
+
+```python
+df.loc[
+    df["salary"] > 3000,
+    ["name", "salary"]
+]
+```
+
+This is often preferable to:
+
+```python
+df[df["salary"] > 3000][["name", "salary"]]
+```
+
+because `loc` allows us to specify both the **rows** and **columns** in one operation.
+
+---
