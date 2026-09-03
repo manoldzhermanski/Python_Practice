@@ -1466,3 +1466,273 @@ df = df.rename(
 ```
 
 ---
+
+# 33. `unique()`
+
+`unique()` returns all unique values in a Series.
+
+It removes duplicate values while preserving the order in which values are first encountered.
+
+### Example
+
+If a column contains:
+
+```text
+IT
+HR
+IT
+Marketing
+IT
+HR
+Marketing
+```
+
+then:
+
+```python
+df["department"].unique()
+```
+
+returns:
+
+```text
+["IT", "HR", "Marketing"]
+```
+
+---
+
+# 34. `nunique()`
+
+`nunique()` returns the **number of unique values** in a Series.
+
+```python
+df["department"].nunique()
+```
+
+Result:
+
+```text
+3
+```
+
+---
+
+# 35. `value_counts()`
+
+`value_counts()` counts how many times each unique value occurs.
+
+```python
+df["department"].value_counts()
+```
+
+Example result:
+
+```text
+IT           3
+HR           2
+Marketing    2
+```
+---
+
+## Sorting with `value_counts()`
+
+By default, the most frequent values appear first.
+
+```python
+df["department"].value_counts()
+```
+
+To display the least frequent values first:
+
+```python
+df["department"].value_counts(ascending=True)
+```
+
+---
+
+## `value_counts(normalize=True)`
+
+By default, `value_counts()` returns absolute counts.
+
+With:
+
+```python
+normalize=True
+```
+
+it returns proportions instead.
+
+```python
+df["department"].value_counts(normalize=True)
+```
+
+Example:
+
+```text
+IT           0.428571
+HR           0.285714
+Marketing    0.285714
+```
+
+To convert proportions into percentages:
+
+```python
+df["department"].value_counts(normalize=True) * 100
+```
+
+Result:
+
+```text
+IT           42.857143
+HR           28.571429
+Marketing    28.571429
+```
+
+---
+
+## `value_counts()` and Missing Values
+
+By default, `value_counts()` does not include `NaN` values.
+
+```python
+df["department"].value_counts()
+```
+
+If we also want to count missing values:
+
+```python
+df["department"].value_counts(dropna=False)
+```
+
+This becomes especially useful when performing data quality checks.
+
+---
+
+## `value_counts()` with Multiple Columns
+
+We can use `value_counts()` on multiple columns:
+
+```python
+df[["department", "age"]].value_counts()
+```
+
+Instead of counting individual values, Pandas counts unique **combinations** of the selected columns.
+
+For example:
+
+```text
+department    age
+IT            25     1
+IT            28     1
+IT            35     1
+HR            30     1
+HR            27     1
+...
+```
+
+---
+
+# 36. `groupby()`
+
+`groupby()` is one of the most important Pandas operations.
+
+It allows us to:
+
+> **Split data into groups, perform an operation on each group, and combine the results.**
+
+For example:
+
+> What is the average salary in each department?
+
+```python
+df.groupby("department")["salary"].mean()
+```
+
+Result:
+
+```text
+department
+HR           3050
+IT           3100
+Marketing    2800
+```
+
+---
+
+# 37. Grouping by Multiple Columns
+
+We can group by more than one column:
+
+```python
+df.groupby(
+    ["department", "age"]
+)["salary"].mean()
+```
+
+This creates groups based on the combination of:
+
+```text
+department + age
+```
+
+This is similar to the combinations we saw with:
+
+```python
+df[["department", "age"]].value_counts()
+```
+
+but `groupby()` allows us to perform arbitrary aggregations on those groups.
+
+---
+
+# 38. Multiple Aggregations with `agg()`
+
+`agg()` allows us to perform multiple aggregation operations at once.
+
+For example:
+
+```python
+df.groupby("department")["salary"].agg(
+    ["mean", "min", "max"]
+)
+```
+
+This gives us:
+
+```text
+             mean    min    max
+department
+HR             ...    ...    ...
+IT             ...    ...    ...
+Marketing      ...    ...    ...
+```
+
+This is much more powerful than calculating each statistic separately.
+
+---
+
+## Named Aggregations
+
+We can give meaningful names to the resulting columns:
+
+```python
+df.groupby("department").agg(
+    average_salary=("salary", "mean"),
+    minimum_salary=("salary", "min"),
+    maximum_salary=("salary", "max")
+)
+```
+
+This produces a DataFrame with descriptive column names:
+
+```text
+             average_salary    minimum_salary    maximum_salary
+department
+HR                  ...
+IT                  ...
+Marketing           ...
+```
+
+This style is especially useful when preparing data for reports or further analysis.
+
+---
