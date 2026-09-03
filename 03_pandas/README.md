@@ -1068,3 +1068,401 @@ df[df["salary"] > 3000][["name", "salary"]]
 because `loc` allows us to specify both the **rows** and **columns** in one operation.
 
 ---
+
+# 25. Sorting Data
+
+`sort_values()` is used to sort a DataFrame by one or more columns.
+
+## Sorting in ascending order
+
+```python
+df.sort_values("salary")
+```
+
+By default, `ascending=True`.
+
+---
+
+## Sorting in descending order
+
+Use `ascending=False`:
+
+```python
+df.sort_values("salary", ascending=False)
+```
+
+This puts the highest salary first.
+
+---
+
+## Sorting by multiple columns
+
+We can provide a list of columns:
+
+```python
+df.sort_values(["department", "salary"])
+```
+
+Pandas first sorts by `department`, and then sorts rows within each department by `salary`.
+
+---
+
+## Different sorting directions
+
+Each column can have its own sorting direction:
+
+```python
+df.sort_values(
+    ["department", "salary"],
+    ascending=[True, False]
+)
+```
+
+This means:
+
+```text
+department → ascending
+salary     → descending
+```
+
+---
+
+## Sorting does not modify the original DataFrame
+
+By default:
+
+```python
+sorted_df = df.sort_values("salary")
+```
+
+creates a sorted DataFrame while leaving `df` unchanged.
+
+You can also assign the result back:
+
+```python
+df = df.sort_values("salary")
+```
+
+Although `inplace=True` is available:
+
+```python
+df.sort_values("salary", inplace=True)
+```
+
+it is often clearer to explicitly assign the result to a variable.
+
+---
+
+# 26. Adding New Columns
+
+A new column can be created simply by assigning a value to a new column name.
+
+## Assigning the same value to every row
+
+```python
+df["bonus"] = 500
+```
+
+Every row receives the value `500`.
+
+---
+
+## Creating a column from another column
+
+Pandas allows vectorized operations on entire columns.
+
+For example:
+
+```python
+df["annual_salary"] = df["salary"] * 12
+```
+
+If:
+
+```text
+salary
+2500
+3200
+2800
+```
+
+the result is:
+
+```text
+annual_salary
+30000
+38400
+33600
+```
+
+No `for` loop is required.
+
+---
+
+## Creating a column from multiple columns
+
+We can use several columns in an expression:
+
+```python
+df["salary_with_bonus"] = df["salary"] + df["bonus"]
+```
+
+Or:
+
+```python
+df["annual_salary_with_bonus"] = (
+    df["salary"] + df["bonus"]
+) * 12
+```
+
+Pandas performs the calculation row by row.
+
+---
+
+# 27. Modifying Existing Columns
+
+An existing column can be modified by assigning a new Series or calculation to it.
+
+## Increase every salary by 500
+
+```python
+df["salary"] = df["salary"] + 500
+```
+
+Or:
+
+```python
+df["salary"] += 500
+```
+
+---
+
+## Increase every salary by 10%
+
+```python
+df["salary"] = df["salary"] * 1.10
+```
+
+This applies the calculation to every row.
+
+---
+
+# 28. Modifying Specific Values with `loc`
+
+`loc` can be used to modify specific cells.
+
+For example:
+
+```python
+df.loc[0, "salary"] = 3000
+```
+
+This changes the salary of the row with index `0`.
+
+---
+
+## Modifying multiple rows
+
+We can provide multiple labels:
+
+```python
+df.loc[[0, 2], "salary"] = 5000
+```
+
+This changes the salary of rows `0` and `2`.
+
+---
+
+# 29. Conditional Modification
+
+`loc` becomes especially powerful when combined with filtering.
+
+For example:
+
+> Increase the salary of all IT employees by 10%.
+
+```python
+df.loc[
+    df["department"] == "IT",
+    "salary"
+] *= 1.10
+```
+
+The condition:
+
+```python
+df["department"] == "IT"
+```
+
+selects the relevant rows.
+
+The second part:
+
+```python
+"salary"
+```
+
+specifies which column should be modified.
+
+Conceptually:
+
+```text
+filter rows
+      ↓
+select column
+      ↓
+modify values
+```
+
+---
+
+# 30. Creating a Boolean Column
+
+We can create a column containing `True` / `False` values.
+
+For example:
+
+```python
+df["is_senior"] = df["age"] >= 30
+```
+
+The comparison is performed for every row.
+
+Example:
+
+```text
+age    is_senior
+25     False
+30     True
+28     False
+22     False
+35     True
+27     False
+31     True
+```
+
+This is often simpler than manually creating the column with `loc`.
+
+---
+
+## Creating a Boolean column with `loc`
+
+The same result can also be achieved using `loc`:
+
+```python
+df["is_senior"] = False
+
+df.loc[
+    df["age"] >= 30,
+    "is_senior"
+] = True
+```
+
+This approach is useful when the values or conditions are more complex.
+
+---
+
+# 31. Removing Columns with `drop()`
+
+`drop()` can be used to remove rows or columns.
+
+## Removing a column
+
+```python
+df.drop("bonus", axis=1)
+```
+
+Here:
+
+```text
+axis=1 → columns
+```
+
+---
+
+## Removing multiple columns
+
+```python
+df.drop(
+    ["bonus", "annual_salary"],
+    axis=1
+)
+```
+
+---
+
+## Removing a row
+
+```python
+df.drop(0, axis=0)
+```
+
+Here:
+
+```text
+axis=0 → rows
+```
+
+### Remember
+
+```text
+axis=0 → rows
+axis=1 → columns
+```
+
+---
+
+## `drop()` does not modify the original DataFrame by default
+
+For example:
+
+```python
+new_df = df.drop("bonus", axis=1)
+```
+
+The original `df` remains unchanged.
+
+You can assign the result back:
+
+```python
+df = df.drop("bonus", axis=1)
+```
+
+---
+
+# 32. Renaming Columns
+
+`rename()` can be used to change column names.
+
+```python
+df.rename(
+    columns={
+        "salary": "monthly_salary"
+    }
+)
+```
+
+Multiple columns can be renamed at once:
+
+```python
+df.rename(
+    columns={
+        "name": "employee_name",
+        "salary": "monthly_salary"
+    }
+)
+```
+
+Again, `rename()` returns a new DataFrame by default.
+
+You can assign it back:
+
+```python
+df = df.rename(
+    columns={
+        "salary": "monthly_salary"
+    }
+)
+```
+
+---
