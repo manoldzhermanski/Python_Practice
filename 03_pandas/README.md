@@ -1736,3 +1736,206 @@ Marketing           ...
 This style is especially useful when preparing data for reports or further analysis.
 
 ---
+
+# 39. `idxmax()`
+
+`idxmax()` returns the **index label** where the maximum value occurs.
+
+This is especially useful when we don't just want the maximum value, but also want to know **where that value is located**.
+
+For example:
+
+```python
+df["salary"].idxmax()
+```
+
+If the DataFrame is:
+
+```text
+      name  salary
+0     Ivan    2500
+1    Maria    3200
+2    Peter    2800
+3     Anna    2100
+4   Georgi    4000
+```
+
+the result is:
+
+```text
+4
+```
+
+Because the highest salary (`4000`) is located at index `4`.
+
+---
+
+## `max()` vs `idxmax()`
+
+These two methods answer different questions:
+
+```python
+df["salary"].max()
+```
+
+→ **What is the maximum value?**
+
+```text
+4000
+```
+
+While:
+
+```python
+df["salary"].idxmax()
+```
+
+→ **Where is the maximum value?**
+
+```text
+4
+```
+
+---
+
+# 40. `idxmin()`
+
+`idxmin()` works exactly like `idxmax()`, but finds the index where the **minimum value** occurs.
+
+```python
+df["salary"].idxmin()
+```
+
+If the lowest salary is `2100` at index `3`, the result is:
+
+```text
+3
+```
+
+To retrieve the entire row:
+
+```python
+df.loc[df["salary"].idxmin()]
+```
+
+Result:
+
+```text
+name       Anna
+salary      2100
+```
+
+---
+
+# 41. `idxmax() \ idxmin()` with `groupby()`
+
+`idxmax()` becomes particularly powerful when combined with `groupby()`.
+
+Suppose we want to find the employee with the **highest salary in each department**.
+
+First:
+
+```python
+df.groupby("department")["salary"].idxmax()
+```
+
+This returns the index of the highest-paid employee in each department.
+
+Conceptually:
+
+```text
+department
+HR           → index 8
+IT           → index 4
+Marketing    → index 6
+```
+
+We can then use those indexes with `loc`:
+
+```python
+df.loc[
+    df.groupby("department")["salary"].idxmax()
+]
+```
+
+This returns the actual rows of the highest-paid employees.
+
+---
+
+# 42. `isna()` and `notna()`
+
+Detect missing values
+
+```python
+df.isna()
+```
+
+```python
+df.notna()
+```
+
+---
+
+### Count missing values
+
+```python
+df.isna().sum()
+```
+
+```python
+df.isna().sum().sum()
+```
+
+---
+
+### Missing percentage
+
+```python
+df.isna().mean() * 100
+```
+
+---
+
+### Filter missing values
+
+```python
+df[df["salary"].isna()]
+```
+
+### Filter non-missing values
+
+```python
+df[df["salary"].notna()]
+```
+
+---
+
+# 43. `dropna()`
+
+Remove missing values
+
+```python
+df.dropna()
+```
+
+Remove rows based on specific columns:
+
+```python
+df.dropna(subset=["salary"])
+```
+
+---
+
+# 44. `fillna()`
+
+Fill missing values
+
+```python
+df["salary"].fillna(0)
+```
+
+```python
+df["department"].fillna("Unknown")
+```
+
+---
