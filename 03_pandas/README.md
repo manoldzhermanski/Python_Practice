@@ -1939,3 +1939,229 @@ df["department"].fillna("Unknown")
 ```
 
 ---
+
+# 45. `dtypes()`
+
+Pandas assigns a data type (dtype) to every column.
+
+Check the data types of all columns:
+
+```python
+df.dtypes
+```
+
+Example:
+
+```text
+name           object
+age             int64
+salary        float64
+department     object
+```
+Check the type of a specific column:
+
+```python
+df["salary"].dtype
+```
+
+Common Pandas Data Types
+
+```text
+dtype	Description
+int64	Integer numbers
+float64	Decimal numbers
+object	Usually strings/text
+bool	True / False
+datetime64[ns]	Dates and timestamps
+category	Categorical data
+string	String/text data
+```
+# 46. astype()
+
+astype() converts a column to a specified data type.
+
+```python
+df["age"] = df["age"].astype(float)
+df["salary"] = df["salary"].astype(int)
+```
+
+Convert a column to strings:
+
+```python
+df["age"] = df["age"].astype(str)
+```
+
+**Important**
+
+`astype()` expects the values to be convertible to the requested type.
+
+For example:
+
+```python
+df["salary"] = df["salary"].astype(float)
+```
+will fail if the column contains:
+
+```text
+2500
+3200
+unknown
+2800
+```
+
+because `"unknown"` cannot be converted to a number.
+
+# 47 to_numeric()
+
+`pd.to_numeric()` is useful when a column contains values that should be numeric but may also contain invalid values.
+
+```python
+df["salary"] = pd.to_numeric(
+    df["salary"],
+    errors="coerce"
+)
+```
+
+`errors="coerce"` converts invalid values to NaN.
+
+Example:
+
+```text
+"2500"    → 2500.0
+"3200"    → 3200.0
+"unknown" → NaN
+"2800"    → 2800.0
+```
+
+This is especially useful during data cleaning.
+
+# 48. .str.upper()
+
+Converts strings to uppercase.
+
+```python
+df["name"].str.upper()
+```
+
+# 49. .str.lower()
+
+Converts strings to lowercase.
+
+```python
+df["name"].str.lower()
+```
+
+# 50. .str.title()
+
+Converts strings to title case.
+
+```python
+df["name"].str.title()
+```
+
+# 51. .str.strip()
+
+Removes whitespace from the beginning and end of strings.
+
+```python
+df["name"].str.strip()
+```
+
+# 52. .str.len()
+
+Returns the number of characters in each string.
+
+```python
+df["name"].str.len()
+```
+
+# 53. .str.count()
+
+Counts how many times a specific substring occurs.
+
+```python
+df["name"].str.count("a")
+```
+
+# 54. .str.contains()
+
+Checks whether a string contains a specific substring.
+
+```python
+df["name"].str.contains("an")
+```
+
+The result is a Boolean Series:
+
+True
+False
+True
+False
+
+Because it returns Boolean values, it can be used for filtering:
+
+```python
+df[df["name"].str.contains("an")]
+Case-insensitive search
+df["name"].str.contains(
+    "an",
+    case=False
+)
+```
+
+This ignores uppercase/lowercase differences.
+
+### Handling missing values
+
+If the column can contain NaN:
+
+```python
+df["name"].str.contains(
+    "an",
+    case=False,
+    na=False
+)
+```
+
+na=False treats missing values as False.
+
+# 55. .str.startswith()
+
+Checks whether a string starts with a specific value.
+
+```python
+df["name"].str.startswith("A")
+```
+
+# 56. .str.endswith()
+
+Checks whether a string ends with a specific value.
+
+```python
+df["name"].str.endswith("a")
+```
+
+# 57. .str.replace()
+
+Replaces part of a string.
+
+```python
+df["department"].str.replace(
+    "IT",
+    "Information Technology"
+)
+```
+
+# 58. .str.split()
+
+Splits a string into multiple parts.
+
+```python
+df["name"].str.split(" ")
+```
+
+# 59. .str.slice()
+
+Extracts part of a string using positions.
+
+df["name"].str.slice(0, 3)
