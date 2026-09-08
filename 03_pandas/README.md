@@ -2165,3 +2165,188 @@ df["name"].str.split(" ")
 Extracts part of a string using positions.
 
 df["name"].str.slice(0, 3)
+
+# 60. `map()`
+
+`map()` applies a mapping or function to every value in a Series.
+
+Mapping with a dictionary
+
+```python
+department_map = {
+    "IT": "Technology",
+    "HR": "Human Resources",
+    "Marketing": "Marketing"
+}
+
+df["department"] = df["department"].map(
+    department_map
+)
+```
+
+Important behavior
+
+**When using a dictionary, values that are not present in the dictionary become NaN.**
+
+Example:
+
+```python
+df["department"].map({
+    "IT": "Technology",
+    "HR": "Human Resources"
+})
+```
+If the DataFrame contains:
+
+```text
+IT
+HR
+Marketing
+```
+The result will contain:
+
+```text
+Technology
+Human Resources
+NaN
+```
+
+because "Marketing" was not included in the dictionary.
+
+## map() with a function
+
+```python
+def double_salary(salary):
+    return salary * 2
+
+df["double_salary"] = df["salary"].map(
+    double_salary
+)
+```
+
+## map() with lambda
+
+```python
+df["double_salary"] = df["salary"].map(
+    lambda salary: salary * 2
+)
+```
+`map()` is especially useful when transforming individual values in one Series.
+
+# 61. replace()
+
+`replace()` replaces specified values.
+
+Dictionary:
+
+```python
+df["department"] = df["department"].replace({
+    "IT": "Technology",
+    "HR": "Human Resources"
+})
+```
+
+**Unlike map(), values that are not specified remain unchanged.**
+
+Example:
+
+```python
+df["department"].replace({
+    "IT": "Technology",
+    "HR": "Human Resources"
+})
+```
+
+If the original values are:
+
+```text
+IT
+HR
+Marketing
+```
+
+The result is:
+
+```text
+Technology
+Human Resources
+Marketing
+```
+
+**"Marketing" remains unchanged because it was not included in the dictionary.**
+
+# 62. apply()
+
+`apply()` applies a function to values in a Series or along an axis of a DataFrame.
+
+## apply() on a Series
+
+Example:
+
+```python
+df["salary"].apply(
+    lambda salary: salary * 1.10
+)
+```
+
+## apply() with a normal function
+
+```python
+def salary_category(salary):
+    if salary < 2500:
+        return "Low"
+    elif salary < 3500:
+        return "Medium"
+    else:
+        return "High"
+
+df["salary_category"] = df["salary"].apply(
+    salary_category
+)
+```
+## apply(axis=1) — Working with Rows
+
+`apply(axis=1)` allows a function to process an entire row.
+
+This is useful when the calculation depends on multiple columns.
+
+Example:
+
+```python
+def is_senior(row):
+    return (
+        row["salary"] >= 3000
+        and row["years_experience"] >= 5
+    )
+
+df["is_senior"] = df.apply(
+    is_senior,
+    axis=1
+)
+```
+
+Each row contains the values from one employee.
+
+For example:
+
+```text
+name              Ivan
+salary            2500
+department        IT
+years_experience  2
+```
+
+Inside the function:
+
+```text
+row["salary"]
+returns:
+2500
+
+and
+
+row["years_experience"]
+returns:
+2
+```
+---
