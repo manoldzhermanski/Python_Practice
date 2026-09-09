@@ -2539,3 +2539,262 @@ column ↔ index   → join()
 
 ---
 
+# 64. `concat()`
+
+`concat()` is used to combine multiple Pandas objects along a particular axis.
+
+```python
+pd.concat([df1, df2])
+```
+
+The two main directions are:
+
+```text
+axis=0 → rows
+axis=1 → columns
+```
+
+---
+
+## `axis=0` — Concatenate Rows
+
+By default, `concat()` combines DataFrames vertically.
+
+```python
+result = pd.concat([df1, df2])
+```
+
+Example:
+
+```python
+df1 = pd.DataFrame({
+    "name": ["Ivan", "Maria"],
+    "salary": [2500, 3200]
+})
+
+df2 = pd.DataFrame({
+    "name": ["Peter", "Anna"],
+    "salary": [2800, 2100]
+})
+
+result = pd.concat([df1, df2])
+```
+
+---
+
+## `ignore_index=True`
+
+By default, the original indexes are preserved.
+
+```python
+result = pd.concat([df1, df2])
+```
+
+This can produce:
+
+```text
+    name  salary
+0   Ivan    2500
+1  Maria    3200
+0  Peter    2800
+1   Anna    2100
+```
+
+Use `ignore_index=True` to create a new sequential index:
+
+```python
+result = pd.concat(
+    [df1, df2],
+    ignore_index=True
+)
+```
+
+Result:
+
+```text
+    name  salary
+0   Ivan    2500
+1  Maria    3200
+2  Peter    2800
+3   Anna    2100
+```
+
+This is especially useful when combining datasets that should form one continuous table.
+
+---
+
+## `axis=1` — Concatenate Columns
+
+With `axis=1`, DataFrames are combined horizontally.
+
+```python
+result = pd.concat(
+    [df1, df2],
+    axis=1
+)
+```
+
+Conceptually:
+
+```text
+df1 | df2
+```
+
+Example:
+
+```python
+names = pd.DataFrame({
+    "name": ["Ivan", "Maria", "Peter"]
+})
+
+salaries = pd.DataFrame({
+    "salary": [2500, 3200, 2800]
+})
+
+result = pd.concat(
+    [names, salaries],
+    axis=1
+)
+```
+
+Result:
+
+```text
+    name  salary
+0   Ivan    2500
+1  Maria    3200
+2  Peter    2800
+```
+
+With `axis=1`, Pandas aligns the DataFrames using their **indexes**.
+
+---
+
+## Different Columns
+
+When concatenating rows, DataFrames do not need to have identical columns.
+
+```python
+df1 = pd.DataFrame({
+    "name": ["Ivan", "Maria"],
+    "salary": [2500, 3200]
+})
+
+df2 = pd.DataFrame({
+    "name": ["Peter", "Anna"],
+    "department": ["IT", "HR"]
+})
+
+result = pd.concat(
+    [df1, df2],
+    ignore_index=True
+)
+```
+
+Result:
+
+```text
+    name  salary department
+0   Ivan  2500.0        NaN
+1  Maria  3200.0        NaN
+2  Peter     NaN         IT
+3   Anna     NaN         HR
+```
+
+Missing values are filled with `NaN`.
+
+---
+
+## `join="outer"`
+
+`outer` is the default behavior.
+
+```python
+result = pd.concat(
+    [df1, df2],
+    join="outer"
+)
+```
+
+It keeps **all columns** from all DataFrames.
+
+Conceptually:
+
+```text
+columns(df1) ∪ columns(df2)
+```
+
+---
+
+## `join="inner"`
+
+`inner` keeps only columns that exist in **all DataFrames**.
+
+```python
+result = pd.concat(
+    [df1, df2],
+    join="inner"
+)
+```
+
+Conceptually:
+
+```text
+columns(df1) ∩ columns(df2)
+```
+
+Example:
+
+```python
+df1 = pd.DataFrame({
+    "name": ["Ivan"],
+    "salary": [2500]
+})
+
+df2 = pd.DataFrame({
+    "name": ["Maria"],
+    "salary": [3200],
+    "department": ["HR"]
+})
+
+result = pd.concat(
+    [df1, df2],
+    join="inner",
+    ignore_index=True
+)
+```
+
+Result:
+
+```text
+    name  salary
+0   Ivan    2500
+1  Maria    3200
+```
+
+---
+
+## `keys=`
+
+`keys` can be used to identify where each part of the concatenated data came from.
+
+```python
+result = pd.concat(
+    [df1, df2],
+    keys=["Group A", "Group B"]
+)
+```
+
+This creates a **MultiIndex**:
+
+```text
+          name  salary
+Group A  0     Ivan    2500
+         1     Maria   3200
+Group B  0     Peter   2800
+         1     Anna    2100
+```
+
+This can be useful when combining datasets from different sources, periods, or categories.
+
+---
