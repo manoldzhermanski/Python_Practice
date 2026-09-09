@@ -2350,3 +2350,192 @@ returns:
 2
 ```
 ---
+
+# 63.  Pandas `join()`
+
+`join()` combines DataFrames, primarily using their **indexes**.
+
+### Basic Syntax
+
+```python
+df1.join(df2)
+```
+
+By default, `join()` performs a **left join**.
+
+---
+
+### Basic Example
+
+```python
+employees = pd.DataFrame({
+    "name": ["Ivan", "Maria", "Peter"],
+    "salary": [2500, 3200, 2800]
+}, index=[1, 2, 3])
+
+departments = pd.DataFrame({
+    "department": ["IT", "HR", "Marketing"]
+}, index=[1, 2, 3])
+
+result = employees.join(departments)
+
+print(result)
+```
+
+The indexes are used to match rows.
+
+---
+
+### `how=`
+
+`join()` supports four main join types:
+
+```python
+df1.join(df2, how="left")    # default
+df1.join(df2, how="right")
+df1.join(df2, how="inner")
+df1.join(df2, how="outer")
+```
+
+| Join    | Description                            |
+| ------- | -------------------------------------- |
+| `left`  | Keep all rows from the left DataFrame  |
+| `right` | Keep all rows from the right DataFrame |
+| `inner` | Keep only matching indexes             |
+| `outer` | Keep all indexes from both DataFrames  |
+
+---
+
+### Joining a Column to an Index
+
+`join()` can match a column from the left DataFrame to the **index of the right DataFrame**.
+
+```python
+employees = pd.DataFrame({
+    "employee_id": [1, 2, 3],
+    "name": ["Ivan", "Maria", "Peter"],
+    "department_id": [10, 20, 10]
+})
+
+departments = pd.DataFrame({
+    "department_id": [10, 20],
+    "department": ["IT", "HR"]
+})
+
+departments = departments.set_index("department_id")
+
+result = employees.join(
+    departments,
+    on="department_id",
+    how="left"
+)
+```
+
+The relationship is:
+
+```text
+employees["department_id"]
+            ↓
+     departments.index
+```
+
+---
+
+### `set_index()`
+
+Convert a column into the DataFrame index:
+
+```python
+departments = departments.set_index("department_id")
+```
+
+This is often useful before using `join()`.
+
+---
+
+### `reset_index()`
+
+Convert the index back into a regular column:
+
+```python
+df.reset_index()
+```
+
+To remove the old index:
+
+```python
+df.reset_index(drop=True)
+```
+
+---
+
+### Overlapping Column Names
+
+If both DataFrames contain columns with the same name, use `lsuffix` and `rsuffix`:
+
+```python
+result = df1.join(
+    df2,
+    lsuffix="_left",
+    rsuffix="_right"
+)
+```
+
+* `lsuffix` → suffix for overlapping columns from the left DataFrame
+* `rsuffix` → suffix for overlapping columns from the right DataFrame
+
+---
+
+### Joining Multiple DataFrames
+
+```python
+result = df1.join([df2, df3])
+```
+
+Useful when multiple DataFrames share the same index.
+
+---
+
+### `join()` vs `merge()`
+
+`merge()` is generally used for **column-based** relationships:
+
+```python
+employees.merge(
+    departments,
+    on="department_id",
+    how="left"
+)
+```
+
+`join()` is mainly used for **index-based** relationships:
+
+```python
+employees.join(departments)
+```
+
+Or:
+
+```python
+employees.join(
+    departments,
+    on="department_id"
+)
+```
+
+In the last example:
+
+```text
+employees["department_id"] → departments.index
+```
+
+### Quick Rule
+
+```text
+column ↔ column  → merge()
+index  ↔ index   → join()
+column ↔ index   → join()
+```
+
+---
+
