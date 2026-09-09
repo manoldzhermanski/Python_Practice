@@ -2798,3 +2798,64 @@ Group B  0     Peter   2800
 This can be useful when combining datasets from different sources, periods, or categories.
 
 ---
+
+# 65. `pivot_table()`
+
+`pivot_table()` is used to create **summary tables** from a DataFrame.
+
+```python
+df.pivot_table(
+    values="column",
+    index="row_dimension",
+    columns="column_dimension",
+    aggfunc="aggregation_function"
+)
+```
+
+The most important arguments are:
+
+| Argument     | Description                   |
+| ---------    | -------------------------     |
+| `values`     | Column(s) to aggregate        |
+| `index`      | Column(s) used as rows        |
+| `columns`    | Column(s) used as columns     |
+| `aggfunc`    | Aggregation function          |
+| `fill_value` | Use to replace missing values |
+| `margins`    | `margins=True` adds totals (`All`) to the pivot table.
+---
+
+## Multiple `values`
+
+We can aggregate multiple columns at the same time.
+
+```python
+employees.pivot_table(
+    values=["salary", "years_experience"],
+    index="department",
+    columns="gender",
+    aggfunc="mean"
+)
+```
+
+This calculates:
+
+* average salary
+* average years of experience
+
+for every department/gender combination.
+
+---
+
+## Multiple Aggregations
+
+We can apply multiple aggregation functions:
+
+```python
+employees.pivot_table(
+    values="salary",
+    index="department",
+    aggfunc=["mean", "min", "max"]
+)
+```
+
+---
