@@ -2859,3 +2859,156 @@ employees.pivot_table(
 ```
 
 ---
+
+
+# 66. `to_datetime()`
+
+Use `pd.to_datetime()` to convert strings or other date-like values into Pandas datetime objects.
+
+```python
+import pandas as pd
+
+dates = pd.Series([
+    "2026-01-15",
+    "2026-02-20",
+    "2026-03-10"
+])
+
+dates = pd.to_datetime(dates)
+```
+
+The resulting values use Pandas' datetime type.
+
+```python
+print(dates)
+```
+
+Output:
+
+```text
+0   2026-01-15
+1   2026-02-20
+2   2026-03-10
+dtype: datetime64[ns]
+```
+
+---
+
+## The `.dt` Accessor
+
+Once a Series contains datetime values, use the `.dt` accessor to extract components or perform datetime operations.
+
+Common `.dt` properties:
+
+| Property            | Description                 |
+| ------------------- | --------------------------- |
+| `.dt.year`          | Year                        |
+| `.dt.month`         | Month number                |
+| `.dt.day`           | Day of month                |
+| `.dt.hour`          | Hour                        |
+| `.dt.minute`        | Minute                      |
+| `.dt.second`        | Second                      |
+| `.dt.dayofweek`     | Day of week as number       |
+| `.dt.day_name()`    | Day name                    |
+| `.dt.month_name()`  | Month name                  |
+| `.dt.days_in_month` | Number of days in the month |
+
+---
+
+## Day of the Week
+
+Use:
+
+```python
+df["order_date"].dt.dayofweek
+```
+
+Pandas uses the following numbering:
+
+```text
+0 = Monday
+1 = Tuesday
+2 = Wednesday
+3 = Thursday
+4 = Friday
+5 = Saturday
+6 = Sunday
+```
+
+## Date Differences
+
+Subtracting two datetime columns produces a Pandas `Timedelta`.
+
+```python
+df["delivery_time"] = (
+    df["delivery_date"] - df["order_date"]
+)
+```
+
+Example:
+
+```text
+order_date   delivery_date   delivery_time
+2026-01-15   2026-01-18      3 days
+2026-01-22   2026-01-27      5 days
+```
+
+The resulting column has a timedelta dtype.
+
+```python
+df["delivery_time"].dtype
+```
+
+Typically:
+
+```text
+timedelta64[ns]
+```
+
+---
+
+## Invalid Dates and `errors="coerce"`
+
+Real datasets often contain invalid or inconsistent date values.
+
+Example:
+
+```python
+dates = pd.Series([
+    "2026-01-15",
+    "2026-02-20",
+    "invalid date",
+    "2026-04-10",
+    "not available"
+])
+```
+
+Trying to convert this directly can raise an error.
+
+Instead:
+
+```python
+dates = pd.to_datetime(
+    dates,
+    errors="coerce"
+)
+```
+
+Invalid values become `NaT`.
+
+`NaT` means:
+
+> Not a Time
+
+Example:
+
+```text
+0   2026-01-15
+1   2026-02-20
+2          NaT
+3   2026-04-10
+4          NaT
+dtype: datetime64[ns]
+```
+
+---
