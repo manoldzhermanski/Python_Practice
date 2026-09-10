@@ -3011,4 +3011,351 @@ Example:
 dtype: datetime64[ns]
 ```
 
+# 67. `set_index()`
+
+You can turn an existing column into the DataFrame's index.
+
+```python
+employees = employees.set_index("employee_id")
+```
+
+The DataFrame becomes:
+
+```text
+             name  department  salary
+employee_id
+101          Ivan          IT    3000
+102          Maria         HR    3500
+103          Peter         IT    2800
+104          Anna       Sales    2500
+```
+
+`employee_id` is now the index rather than a regular column.
+
+You can check the columns:
+
+```python
+employees.columns
+```
+
+and the index:
+
+```python
+employees.index
+```
+
+---
+
+# 68. `reset_index()`
+
+Suppose:
+
+```python
+employees = employees.set_index("employee_id")
+```
+
+Then:
+
+```python
+employees = employees.reset_index()
+```
+
+returns `employee_id` to a normal column:
+
+```text
+   employee_id   name  department  salary
+0          101   Ivan          IT    3000
+1          102  Maria          HR    3500
+2          103  Peter          IT    2800
+3          104   Anna       Sales    2500
+```
+
+This is useful when the index is no longer needed for the current analysis.
+
+---
+
+## `reset_index(drop=True)`
+
+Sometimes you want to discard the existing index completely instead of turning it into a column.
+
+Use:
+
+```python
+df = df.reset_index(drop=True)
+```
+
+Without `drop=True`, the old index becomes a column.
+
+With `drop=True`, it is discarded and a new `RangeIndex` is created.
+
+---
+
+# 69. `sort_index()`
+
+`sort_index()` sorts the DataFrame according to its index.
+
+Ascending:
+
+```python
+df.sort_index()
+```
+
+Descending:
+
+```python
+df.sort_index(ascending=False)
+```
+
+This is different from `sort_values()`.
+
+```text
+sort_index()
+    → sort by index
+
+sort_values()
+    → sort by column values
+```
+
+For example:
+
+```python
+df.sort_values("salary")
+```
+
+sorts by salary, while:
+
+```python
+df.sort_index()
+```
+
+sorts by the index.
+
+---
+
+## What is a MultiIndex?
+
+A **MultiIndex** is an index with multiple levels.
+
+A normal index might look like:
+
+```text
+IT
+HR
+Sales
+```
+
+A MultiIndex can look like:
+
+```text
+department   gender
+IT           F
+IT           M
+HR           F
+HR           M
+Sales        F
+Sales        M
+```
+
+Here there are two index levels:
+
+```text
+Level 0 → department
+Level 1 → gender
+```
+
+A MultiIndex allows rows to be identified using multiple labels.
+
+---
+
+## Creating a MultiIndex
+
+Suppose we have:
+
+```python
+employees = pd.DataFrame({
+    "department": ["IT", "IT", "HR", "HR", "Sales", "Sales"],
+    "gender": ["M", "F", "M", "F", "M", "F"],
+    "name": [
+        "Ivan", "Maria", "Peter",
+        "Anna", "Georgi", "Elena"
+    ],
+    "salary": [3000, 3500, 2800, 3200, 2500, 2900]
+})
+```
+
+We can create a MultiIndex using:
+
+```python
+employees = employees.set_index(
+    ["department", "gender"]
+)
+```
+
+Result:
+
+```text
+                    name  salary
+department gender
+IT         M         Ivan    3000
+           F        Maria    3500
+HR         M        Peter    2800
+           F         Anna    3200
+Sales      M       Georgi    2500
+           F        Elena    2900
+```
+
+---
+
+### Selecting from a MultiIndex
+
+Use `.loc[]`.
+
+### Select all IT employees
+
+```python
+employees.loc["IT"]
+```
+
+This selects all rows where:
+
+```text
+department = IT
+```
+
+### Select one specific combination
+
+```python
+employees.loc[("IT", "M")]
+```
+
+This selects:
+
+```text
+department = IT
+gender = M
+```
+
+The tuple:
+
+```python
+("IT", "M")
+```
+
+represents the complete MultiIndex label.
+
+---
+
+### Selecting Multiple MultiIndex Entries
+
+You can provide a list of tuples:
+
+```python
+employees.loc[
+    [
+        ("IT", "M"),
+        ("HR", "F")
+    ]
+]
+```
+
+Each tuple represents one complete MultiIndex label.
+
+Mental model:
+
+```text
+("IT", "M")
+    ↓
+level 0 = IT
+level 1 = M
+```
+
+---
+
+### Inspecting MultiIndex Levels
+
+You can inspect the complete index:
+
+```python
+employees.index
+```
+
+Inspect the level names:
+
+```python
+employees.index.names
+```
+
+Inspect the individual levels:
+
+```python
+employees.index.levels
+```
+
+For example:
+
+```text
+names:
+["department", "gender"]
+```
+
+---
+
+### Sorting a MultiIndex
+
+Use:
+
+```python
+df.sort_index()
+```
+
+This sorts according to the MultiIndex.
+
+You can also specify a particular level:
+
+```python
+df.sort_index(level="department")
+```
+
+or:
+
+```python
+df.sort_index(level="gender")
+```
+
+This becomes useful when working with larger MultiIndex structures.
+
+---
+
+# 70. `swaplevel()`
+
+`swaplevel()` changes the order of MultiIndex levels.
+
+Suppose the index is:
+
+```text
+department   gender
+IT           M
+IT           F
+HR           M
+HR           F
+```
+
+You can swap the levels:
+
+```python
+df.swaplevel()
+```
+
+Conceptually:
+
+```text
+gender       department
+M            IT
+F            IT
+M            HR
+F            HR
+```
+
+This is an advanced operation and is mainly useful when the order of index levels matters.
+
 ---
